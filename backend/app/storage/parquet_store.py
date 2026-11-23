@@ -158,7 +158,8 @@ class ParquetStore:
         # Read existing rows (if any) for merge.
         existing: dict[tuple, dict] = {}
         if target.exists():
-            table = pq.read_table(target)
+            with open(target, "rb") as rf:
+                table = pq.read_table(rf)
             for row in table.to_pylist():
                 key = (row["source_id"], row["instrument_id"], row["timeframe"], row["open_time_utc"])
                 existing[key] = row
@@ -180,9 +181,11 @@ class ParquetStore:
         os.close(fd)
         tmp_path = Path(tmp_name)
         try:
-            pq.write_table(table, tmp_path, compression="zstd", write_statistics=True)
-            # fsync temp file before atomic replace.
-            with open(tmp_path, "rb") as f:
+            # Open in writable binary mode ("wb") so os.fsync (Win32 FlushFileBuffers)
+            # has GENERIC_WRITE access on Windows as well as POSIX.
+            with open(tmp_path, "wb") as f:
+                pq.write_table(table, f, compression="zstd", write_statistics=True)
+                f.flush()
                 os.fsync(f.fileno())
             os.replace(tmp_path, target)
             # fsync directory to persist the rename (best-effort on platforms that support it).
@@ -217,7 +220,8 @@ class ParquetStore:
         return result
 
     def read_partition(self, file_path: Path | str) -> list[Candle]:
-        table = pq.read_table(file_path)
+        with open(file_path, "rb") as rf:
+            table = pq.read_table(rf)
         return [_row_to_candle(r) for r in table.to_pylist()]
 
     def scan_files(self) -> list[Path]:
@@ -240,7 +244,8 @@ class ParquetStore:
             entry = manifest_by_path.get(str(f))
             if entry is None:
                 # Create manifest entry from file metadata.
-                table = pq.read_table(f)
+                with open(f, "rb") as rf:
+                    table = pq.read_table(rf)
                 count = table.num_rows
                 # Derive partition key from path: market/{venue}/{mtype}/{key}/{tf}/{month}.parquet
                 parts = f.relative_to(self.data_dir / "market").parts
