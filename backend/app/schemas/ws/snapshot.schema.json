@@ -1,0 +1,452 @@
+{
+  "$defs": {
+    "Candle": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "instrument_id": {
+          "title": "Instrument Id",
+          "type": "string"
+        },
+        "timeframe": {
+          "title": "Timeframe",
+          "type": "string"
+        },
+        "open_time_utc": {
+          "format": "date-time",
+          "title": "Open Time Utc",
+          "type": "string"
+        },
+        "close_time_utc": {
+          "format": "date-time",
+          "title": "Close Time Utc",
+          "type": "string"
+        },
+        "open": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Open"
+        },
+        "high": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "High"
+        },
+        "low": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Low"
+        },
+        "close": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Close"
+        },
+        "volume": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Volume"
+        },
+        "volume_type": {
+          "$ref": "#/$defs/VolumeType"
+        },
+        "price_basis": {
+          "$ref": "#/$defs/PriceBasis"
+        },
+        "is_closed": {
+          "title": "Is Closed",
+          "type": "boolean"
+        },
+        "quality_flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Quality Flags",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "revision": {
+          "default": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "received_at_utc": {
+          "format": "date-time",
+          "title": "Received At Utc",
+          "type": "string"
+        },
+        "updated_at_utc": {
+          "format": "date-time",
+          "title": "Updated At Utc",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "instrument_id",
+        "timeframe",
+        "open_time_utc",
+        "close_time_utc",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume_type",
+        "price_basis",
+        "is_closed",
+        "received_at_utc",
+        "updated_at_utc"
+      ],
+      "title": "Candle",
+      "type": "object"
+    },
+    "FeedHealth": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "instrument_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instrument Id"
+        },
+        "status": {
+          "$ref": "#/$defs/FeedStatus"
+        },
+        "last_quote_age_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Quote Age Ms"
+        },
+        "last_heartbeat_age_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Heartbeat Age Ms"
+        },
+        "subscription_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subscription State"
+        },
+        "reconnect_count": {
+          "default": 0,
+          "title": "Reconnect Count",
+          "type": "integer"
+        },
+        "gaps_detected": {
+          "default": 0,
+          "title": "Gaps Detected",
+          "type": "integer"
+        },
+        "clock_skew_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clock Skew Ms"
+        },
+        "rate_limit_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rate Limit State"
+        }
+      },
+      "required": [
+        "source_id",
+        "status"
+      ],
+      "title": "FeedHealth",
+      "type": "object"
+    },
+    "FeedStatus": {
+      "enum": [
+        "CONNECTED",
+        "DEGRADED",
+        "STALE",
+        "MARKET_CLOSED",
+        "OFFLINE",
+        "RATE_LIMITED"
+      ],
+      "title": "FeedStatus",
+      "type": "string"
+    },
+    "PriceBasis": {
+      "enum": [
+        "bid",
+        "ask",
+        "mid",
+        "last",
+        "unknown"
+      ],
+      "title": "PriceBasis",
+      "type": "string"
+    },
+    "Quote": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "instrument_id": {
+          "title": "Instrument Id",
+          "type": "string"
+        },
+        "bid": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bid"
+        },
+        "ask": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ask"
+        },
+        "last": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last"
+        },
+        "exchange_ts_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exchange Ts Utc"
+        },
+        "received_ts_utc": {
+          "format": "date-time",
+          "title": "Received Ts Utc",
+          "type": "string"
+        },
+        "bid_age_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bid Age Ms"
+        },
+        "ask_age_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ask Age Ms"
+        },
+        "quality_flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Quality Flags",
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "source_id",
+        "instrument_id",
+        "received_ts_utc"
+      ],
+      "title": "Quote",
+      "type": "object"
+    },
+    "VolumeType": {
+      "enum": [
+        "exchange",
+        "tick",
+        "none"
+      ],
+      "title": "VolumeType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "type": {
+      "const": "snapshot",
+      "default": "snapshot",
+      "title": "Type",
+      "type": "string"
+    },
+    "stream_epoch": {
+      "title": "Stream Epoch",
+      "type": "string"
+    },
+    "sequence_id": {
+      "title": "Sequence Id",
+      "type": "integer"
+    },
+    "quotes": {
+      "items": {
+        "$ref": "#/$defs/Quote"
+      },
+      "title": "Quotes",
+      "type": "array"
+    },
+    "candles": {
+      "items": {
+        "$ref": "#/$defs/Candle"
+      },
+      "title": "Candles",
+      "type": "array"
+    },
+    "feed_health": {
+      "items": {
+        "$ref": "#/$defs/FeedHealth"
+      },
+      "title": "Feed Health",
+      "type": "array"
+    }
+  },
+  "required": [
+    "stream_epoch",
+    "sequence_id"
+  ],
+  "title": "SnapshotMessage",
+  "type": "object"
+}
