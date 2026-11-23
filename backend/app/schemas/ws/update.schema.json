@@ -424,6 +424,7 @@
     "kind": {
       "enum": [
         "quote",
+        "open_candle",
         "candle_close",
         "revision",
         "feed_health"

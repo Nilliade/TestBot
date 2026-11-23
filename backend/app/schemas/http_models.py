@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
+from backend.app.domain.candle import Candle
+from backend.app.domain.feed_health import FeedHealth
 from backend.app.domain.instrument import Instrument
+from backend.app.domain.quote import Quote
+from backend.app.indicators.engine import IndicatorSnapshot
 
 HTTP_SCHEMA_VERSION = "1.0"
 
@@ -23,3 +27,35 @@ class InstrumentsResponse(BaseModel):
 
     schema_version: str = HTTP_SCHEMA_VERSION
     instruments: list[Instrument]
+
+
+class QuotesResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: str = HTTP_SCHEMA_VERSION
+    quotes: list[Quote] = Field(default_factory=list)
+
+
+class CandlesResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: str = HTTP_SCHEMA_VERSION
+    source_id: str
+    instrument_id: str
+    timeframe: str
+    closed_candles: list[Candle] = Field(default_factory=list)
+    open_candle: Candle | None = None
+
+
+class FeedHealthResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: str = HTTP_SCHEMA_VERSION
+    feed_health: list[FeedHealth] = Field(default_factory=list)
+
+
+class IndicatorsResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: str = HTTP_SCHEMA_VERSION
+    indicators: IndicatorSnapshot

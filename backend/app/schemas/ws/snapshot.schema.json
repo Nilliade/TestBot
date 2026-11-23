@@ -441,6 +441,18 @@
       },
       "title": "Feed Health",
       "type": "array"
+    },
+    "resync_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Resync Reason"
     }
   },
   "required": [

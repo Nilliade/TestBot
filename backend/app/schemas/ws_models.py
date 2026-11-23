@@ -27,6 +27,7 @@ class SnapshotMessage(BaseModel):
     quotes: list[Quote] = Field(default_factory=list)
     candles: list[Candle] = Field(default_factory=list)
     feed_health: list[FeedHealth] = Field(default_factory=list)
+    resync_reason: str | None = None
 
 
 class UpdateMessage(BaseModel):
@@ -36,7 +37,7 @@ class UpdateMessage(BaseModel):
     type: Literal["update"] = "update"
     stream_epoch: str
     sequence_id: int
-    kind: Literal["quote", "candle_close", "revision", "feed_health"]
+    kind: Literal["quote", "open_candle", "candle_close", "revision", "feed_health"]
     quote: Quote | None = None
     candle: Candle | None = None
     feed_health: FeedHealth | None = None
@@ -49,3 +50,4 @@ class ResyncRequest(BaseModel):
     type: Literal["resync_request"] = "resync_request"
     stream_epoch: str
     last_sequence_id: int
+    reason: str | None = None
