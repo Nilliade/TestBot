@@ -1,11 +1,32 @@
-# Stage 1 session calendars (SPEC §4). MARKET_CLOSED only by confirmed calendar.
+# Stage 1 session calendars (SPEC §4).
+# MARKET_CLOSED is emitted ONLY when confirmed == true and timestamp is outside open windows.
+schema_version: "1.0"
 calendars:
   - calendar_id: "crypto-24x7"
-    description: "Crypto spot: continuous (24x7), no confirmed close"
+    description: "Crypto spot: continuous (24x7), no scheduled close"
     timezone: "UTC"
     always_open: true
+    confirmed: true
   - calendar_id: "forex-24x5"
-    description: "Forex/CFD: 24x5 with broker-specific weekend close (to be confirmed via MT5 calendar)"
-    timezone: "UTC"
+    description: "Forex/CFD: Sunday 17:00 America/New_York to Friday 17:00 America/New_York"
+    timezone: "America/New_York"
     always_open: false
-    note: "Weekend close must be confirmed by broker calendar before MARKET_CLOSED is emitted."
+    confirmed: false
+    weekly_open_weekday: 6   # Sunday (Monday=0 .. Sunday=6)
+    weekly_open_hour: 17
+    weekly_open_minute: 0
+    weekly_close_weekday: 4  # Friday
+    weekly_close_hour: 17
+    weekly_close_minute: 0
+    note: "Unconfirmed by default until broker/MT5 session schedule is verified on target."
+  - calendar_id: "forex-24x5-confirmed"
+    description: "Confirmed Forex 24x5 calendar (Sun 17:00 NY - Fri 17:00 NY)"
+    timezone: "America/New_York"
+    always_open: false
+    confirmed: true
+    weekly_open_weekday: 6
+    weekly_open_hour: 17
+    weekly_open_minute: 0
+    weekly_close_weekday: 4
+    weekly_close_hour: 17
+    weekly_close_minute: 0
