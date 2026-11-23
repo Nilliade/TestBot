@@ -13,7 +13,7 @@ if not exist "%VENV_PY%" (
     exit /b %ERRORLEVEL%
 )
 
-"%VENV_PY%" -c "import fastapi, uvicorn, pydantic, pyarrow, yaml" >nul 2>nul
+"%VENV_PY%" -c "import fastapi, uvicorn, pydantic, pyarrow, yaml, tzdata" >nul 2>nul
 if %ERRORLEVEL% neq 0 (
     echo [INFO] Dependencies are not fully installed yet. Running full Setup.bat ...
     call "%~dp0Setup.bat" %*

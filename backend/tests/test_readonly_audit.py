@@ -96,3 +96,6 @@ def test_windows_batch_launchers_use_lockfile_and_loopback():
 
     gitattr = (REPO_ROOT / ".gitattributes").read_text(encoding="utf-8")
     assert "*.bat text eol=crlf" in gitattr
+
+    lock_text = (REPO_ROOT / "backend" / "requirements.lock").read_text(encoding="utf-8")
+    assert "tzdata==" in lock_text
