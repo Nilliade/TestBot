@@ -77,3 +77,21 @@ def test_adapters_workers_security_have_no_trading_code_yet():
     for sub in ["adapters", "workers", "security"]:
         py_files = [p for p in (APP_DIR / sub).glob("*.py") if p.name != "__init__.py"]
         assert py_files == [], f"{sub}/ must be placeholder in 1.1, found {py_files}"
+
+
+def test_windows_batch_launchers_use_lockfile_and_loopback():
+    for bat_name in ["Setup.bat", "Stup.bat", "Start.bat"]:
+        bat_path = REPO_ROOT / bat_name
+        assert bat_path.exists(), f"missing {bat_name}"
+        raw = bat_path.read_bytes()
+        # Ensure pure ASCII so Windows cmd.exe never breaks across codepages.
+        raw.decode("ascii")
+        assert b"requirements.txt" not in raw, f"{bat_name} must not reference requirements.txt"
+
+    setup_text = (REPO_ROOT / "Setup.bat").read_text(encoding="ascii")
+    assert r"backend\requirements.lock" in setup_text
+    assert "127.0.0.1:8765" in setup_text
+    assert "0.0.0.0" not in setup_text
+
+    gitattr = (REPO_ROOT / ".gitattributes").read_text(encoding="utf-8")
+    assert "*.bat text eol=crlf" in gitattr
