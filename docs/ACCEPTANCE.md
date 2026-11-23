@@ -8,13 +8,13 @@
 
 ## A. Automatic deterministic checks (no external network — mandatory gates)
 
-| # | Criterion | Status (Linux sandbox) | Status (Windows target `win32` Python `3.11.9`) | Command / proof | Limitation |
+| # | Criterion | Status (Linux sandbox `Python 3.11.2`) | Status (Windows target `win32` `Python 3.11.9`) | Command / proof | Limitation |
 |---|---|---|---|---|---|
 | A1 | Read-only audit: route list, adapter method allowlist, static search for forbidden trading calls, config tests | `PASS` (7/7 tests) | `PASS` (7/7 tests) | `pytest backend/tests/test_readonly_audit.py -v` | Static audit reduces risk, not absolute proof; adapter allowlist expands in 1.2/1.3 |
 | A2 | Contracts & candles: `Instrument`/`Quote`/`Candle`/`FeedHealth` validation, `[open, close)` UTC, nullable, `supported_timeframes`, PK, revisions, `CONFIRMED_GAP` vs `POSSIBLE_GAP` without interpolation | `PASS` (27/27 tests) | `PASS` (27/27 tests) | `pytest backend/tests/test_contracts.py -v` | — |
 | A3 | Reconnect/recovery/WS queue on fake server (break, reconnect, history reload without dupes, gap preservation, overflow resync) | `NOT RUN` — Step 1.2 | `NOT RUN` — Step 1.2 | — | Not in Step 1.1 scope |
 | A4 | Indicators: independent reference vectors (warm-up, edges, reset after `CONFIRMED_GAP`), batch vs incremental within tolerance | `NOT RUN` — Step 1.2 | `NOT RUN` — Step 1.2 | — | Formulas fixed in SPEC §7; code in Step 1.2 |
-| A5 | Storage: Parquet write failure, failure **between** Parquet publication and SQLite commit + reconciliation, revision dedup, SQLite migrations, backup/restore | `PASS` (14/14 tests) | `PASS` SQLite migrations (3/3) & backup/restore (4/4); Parquet `os.fsync` Win32 fix applied (re-verify 4/7 tests on Windows) | `pytest backend/tests/test_parquet_reconcile.py backend/tests/test_backup_restore.py backend/tests/test_migrations.py -v` | Win32 `FlushFileBuffers` requires `"wb"` handle (fixed in `parquet_store.py`; awaiting Windows re-run) |
+| A5 | Storage: Parquet write failure, failure **between** Parquet publication and SQLite commit + reconciliation, revision dedup, SQLite migrations, backup/restore | `PASS` (14/14 tests) | `PASS` (14/14 tests: migrations 3/3, backup/restore 4/4, parquet_reconcile 7/7) | `pytest backend/tests/test_parquet_reconcile.py backend/tests/test_backup_restore.py backend/tests/test_migrations.py -v` | Verified on both Linux ext4 and Windows NTFS (`48 passed in 1.40s`) |
 | A6 | API & Launcher security: CSRF/Origin/auth, same-origin GET without `Origin`, CSRF refresh on reload/tabs, bootstrap one-time/expiry (incl. first-launch recovery), safe GUI reopen, unsafe ACL refusal, WS handshake, no secrets in logs/errors/static | `NOT RUN` — Step 1.3 | `NOT RUN` — Step 1.3 | — | Not in Step 1.1 scope |
 | A7 | Feed states: `CONNECTED`, `DEGRADED`, `STALE`, `MARKET_CLOSED`, `OFFLINE`, plus `RATE_LIMITED` if REST adapter in scope | `NOT RUN` — Steps 1.2–1.3 | `NOT RUN` — Steps 1.2–1.3 | — | REST reserve not in scope (MT5 chosen); `RATE_LIMITED` `NOT APPLICABLE` |
 | A8 | GUI tests: instrument/timeframe switching, history load, `GAP`/`N/A`/feed statuses, `PREVIEW/UNCONFIRMED`, `SIMULATED` marking | `NOT RUN` — Step 1.4 | `NOT RUN` — Step 1.4 | — | Not in Step 1.1 scope |
@@ -48,7 +48,12 @@
 |---|---|---|
 | Lockfile install (`backend\requirements.lock`) & `.venv` creation on Windows Python 3.11.9 | `PASS` | Verified via `Start.bat` / `.venv\Scripts\python.exe` on user's Windows machine |
 | Offline & local server start (`127.0.0.1:8765`, `GET /`, `GET /docs`, `GET /openapi.json`) | `PASS` | Uvicorn process `[13772]` started cleanly; HTTP 200 OK on `/`, `/docs`, `/openapi.json` |
-| `preflight_check` (online mode): `config`, `storage` (NTFS writable), `clock`, `okx-spot` DNS+TCP | `PASS` (`config`=`OK`, `storage`=`OK`, `clock`=`OK` 3ms, `okx-spot`=`OK` dns+tcp reachable) | Executed on Windows (`2026-11-23T08:16:08Z`); REST/WS live stream & ToS check still required in Step 1.3 |
-| `test_contracts.py` (27/27), `test_migrations.py` (3/3), `test_backup_restore.py` (4/4), `test_readonly_audit.py` (7/7) on Windows NTFS | `PASS` (41/41 passed) | Verified on `win32 -- Python 3.11.9, pytest-8.4.2` |
-| `test_parquet_reconcile.py` on Windows NTFS | 4/7 `PASS` (including `test_failure_between_parquet_and_sqlite_then_reconcile` after Win32 `os.fsync` fix); remaining 3/7 failed with `ZoneInfoNotFoundError: 'No time zone found with key UTC'` (`No module named 'tzdata'`); fixed by pinning `tzdata==2026.6` in `backend/requirements.lock` — **re-run pending on Windows** | Install `tzdata==2026.6` and re-run `.venv\Scripts\python.exe -m pytest backend/tests/ -v` on Windows |
-| MT5 terminal, suitable broker, and demo account availability (`EURUSD`, `USDJPY`, `XAUUSD`) | `NOT RUN` / `BLOCKED` | Reported as `[NOT_RUN] mt5-demo` by `preflight_check`; terminal/broker/demo account still unconfirmed |
+| `preflight_check` (online mode): `config`, `storage` (NTFS writable), `clock`, `okx-spot` DNS+TCP | `PASS` (`config`=`OK`, `storage`=`OK`, `clock`=`OK` 3ms, `okx-spot`=`OK` dns+tcp reachable) | Executed on Windows (`2026-11-23T08:16:08Z`); REST/WS live stream & ToS check belong to Step 1.3 |
+| `test_contracts.py` (27/27), `test_migrations.py` (3/3), `test_backup_restore.py` (4/4), `test_parquet_reconcile.py` (7/7), `test_readonly_audit.py` (7/7) on Windows NTFS | `PASS` (48/48 passed in 1.40s) | Verified on `platform win32 -- Python 3.11.9, pytest-8.4.2` |
+| MT5 terminal, suitable broker, and demo account availability (`EURUSD`, `USDJPY`, `XAUUSD`) | `NOT RUN` / `BLOCKED` (Step 1.3 scope) | Reported as `[NOT_RUN] mt5-demo` by `preflight_check`; terminal/broker/demo account still unconfirmed |
+
+### Step 1.1 gate verdict
+
+- **Linux sandbox deterministic suite (`A1`, `A2`, `A5`, offline startup)**: `PASS` (`48 passed`).
+- **Windows x86_64 target deterministic suite (`A1`, `A2`, `A5`, offline startup, `preflight_check` DNS+TCP to OKX)**: `PASS` (`48 passed in 1.40s`).
+- **All mandatory Step 1.1 gates are PASSED** on both Linux and Windows x86_64.

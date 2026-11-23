@@ -83,16 +83,21 @@ if not exist "backend\requirements.lock" (
     exit /b 1
 )
 
-echo [3/6] Installing pinned dependencies from backend\requirements.lock ...
-"%VENV_PY%" -m pip install --disable-pip-version-check -r backend\requirements.lock
-if %ERRORLEVEL% neq 0 (
-    echo [ERROR] Failed to install dependencies from backend\requirements.lock.
-    echo Check your internet/proxy settings and try again.
-    pause
-    exit /b 1
+echo [3/6] Checking pinned dependencies from backend\requirements.lock ...
+"%VENV_PY%" -c "import fastapi, uvicorn, pydantic, pydantic_settings, pyarrow, yaml, tzdata, pytest, httpx" >nul 2>nul
+if %ERRORLEVEL% equ 0 (
+    echo       All required packages are already installed in .venv.
+) else (
+    echo       Installing pinned dependencies from backend\requirements.lock ...
+    "%VENV_PY%" -m pip install --disable-pip-version-check --timeout 60 --retries 5 -r backend\requirements.lock
+    if !ERRORLEVEL! neq 0 (
+        echo [ERROR] Failed to install dependencies from backend\requirements.lock.
+        echo Check your internet/proxy settings and try again.
+        pause
+        exit /b 1
+    )
+    "%VENV_PY%" -m pip install --disable-pip-version-check --no-deps -e . >nul 2>nul
 )
-
-"%VENV_PY%" -m pip install --disable-pip-version-check --no-deps -e . >nul 2>nul
 
 :: ------------------------------------------------------------------
 :: Step 4. Generate WebSocket JSON Schemas
