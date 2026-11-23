@@ -17,7 +17,7 @@ no trading API keys. See `docs/SPEC-stage1.md`, `docs/THREAT-MODEL.md`,
 
 Prerequisite on Windows: **Python 3.11 (64-bit)** installed with `Add python.exe to PATH` (or standard `py.exe` launcher).
 
-- **`Setup.bat`** (or alias **`Stup.bat`**) — full one-click setup, verification, and launch:
+- **`Setup.bat`** — full one-click setup, verification, and launch:
   1. Locates Python 3.11 (`py -3.11` or `python`).
   2. Creates `.venv` if it does not exist.
   3. Installs dependencies strictly from `backend\requirements.lock`.
@@ -82,7 +82,6 @@ Windows target machine and is `NOT RUN` in the sandbox.
 
 ```text
 Setup.bat       Windows one-click setup, self-test & server launch
-Stup.bat        Alias wrapper forwarding to Setup.bat
 Start.bat       Windows quick start (auto-runs Setup.bat if .venv missing)
 backend/app/    FastAPI, config, domain, schemas, storage, tools
 backend/tests/  Step 1.1 gates (contracts, migrations, backup/restore, reconcile, audit)

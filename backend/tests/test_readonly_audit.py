@@ -80,7 +80,8 @@ def test_adapters_workers_security_have_no_trading_code_yet():
 
 
 def test_windows_batch_launchers_use_lockfile_and_loopback():
-    for bat_name in ["Setup.bat", "Stup.bat", "Start.bat"]:
+    assert not (REPO_ROOT / "Stup.bat").exists()
+    for bat_name in ["Setup.bat", "Start.bat"]:
         bat_path = REPO_ROOT / bat_name
         assert bat_path.exists(), f"missing {bat_name}"
         raw = bat_path.read_bytes()
