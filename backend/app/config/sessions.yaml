@@ -1,0 +1,11 @@
+# Stage 1 session calendars (SPEC §4). MARKET_CLOSED only by confirmed calendar.
+calendars:
+  - calendar_id: "crypto-24x7"
+    description: "Crypto spot: continuous (24x7), no confirmed close"
+    timezone: "UTC"
+    always_open: true
+  - calendar_id: "forex-24x5"
+    description: "Forex/CFD: 24x5 with broker-specific weekend close (to be confirmed via MT5 calendar)"
+    timezone: "UTC"
+    always_open: false
+    note: "Weekend close must be confirmed by broker calendar before MARKET_CLOSED is emitted."

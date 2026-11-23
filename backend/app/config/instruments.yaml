@@ -1,0 +1,187 @@
+# Stage 1 instrument catalog (SPEC §1).
+# OKX spot (public, no keys) + MT5 Forex/XAU (demo, subprocess worker).
+# Availability is verified by capability discovery / preflight_check;
+# unavailable instruments are shown as UNAVAILABLE, never substituted.
+schema_version: "1.0"
+instruments:
+  - schema_version: "1.0"
+    source_id: "okx-spot"
+    instrument_id: "BTC-USDT"
+    instrument_storage_key: "BTC-USDT"
+    alias: "BTC/USDT"
+    venue_id: "okx"
+    account_or_feed_id: "okx-public-spot"
+    provider_symbol: "BTC-USDT"
+    market_type: "spot"
+    base_ccy: "BTC"
+    quote_ccy: "USDT"
+    settlement_ccy: "USDT"
+    expiry: null
+    contract_variant: null
+    price_basis: "last"
+    volume_type: "exchange"
+    supported_timeframes: ["1m", "5m", "15m", "1h", "4h", "1d"]
+    specs:
+      min_qty: "0.00001"
+      qty_step: "0.00001"
+      price_step: "0.1"
+      min_notional: "1"
+      contract_size: "1"
+    supports_short: false
+    session_calendar_id: "crypto-24x7"
+
+  - schema_version: "1.0"
+    source_id: "okx-spot"
+    instrument_id: "ETH-USDT"
+    instrument_storage_key: "ETH-USDT"
+    alias: "ETH/USDT"
+    venue_id: "okx"
+    account_or_feed_id: "okx-public-spot"
+    provider_symbol: "ETH-USDT"
+    market_type: "spot"
+    base_ccy: "ETH"
+    quote_ccy: "USDT"
+    settlement_ccy: "USDT"
+    expiry: null
+    contract_variant: null
+    price_basis: "last"
+    volume_type: "exchange"
+    supported_timeframes: ["1m", "5m", "15m", "1h", "4h", "1d"]
+    specs:
+      min_qty: "0.0001"
+      qty_step: "0.0001"
+      price_step: "0.01"
+      min_notional: "1"
+      contract_size: "1"
+    supports_short: false
+    session_calendar_id: "crypto-24x7"
+
+  - schema_version: "1.0"
+    source_id: "okx-spot"
+    instrument_id: "SOL-USDT"
+    instrument_storage_key: "SOL-USDT"
+    alias: "SOL/USDT"
+    venue_id: "okx"
+    account_or_feed_id: "okx-public-spot"
+    provider_symbol: "SOL-USDT"
+    market_type: "spot"
+    base_ccy: "SOL"
+    quote_ccy: "USDT"
+    settlement_ccy: "USDT"
+    expiry: null
+    contract_variant: null
+    price_basis: "last"
+    volume_type: "exchange"
+    supported_timeframes: ["1m", "5m", "15m", "1h", "4h", "1d"]
+    specs:
+      min_qty: "0.01"
+      qty_step: "0.01"
+      price_step: "0.001"
+      min_notional: "1"
+      contract_size: "1"
+    supports_short: false
+    session_calendar_id: "crypto-24x7"
+
+  - schema_version: "1.0"
+    source_id: "okx-spot"
+    instrument_id: "XRP-USDT"
+    instrument_storage_key: "XRP-USDT"
+    alias: "XRP/USDT"
+    venue_id: "okx"
+    account_or_feed_id: "okx-public-spot"
+    provider_symbol: "XRP-USDT"
+    market_type: "spot"
+    base_ccy: "XRP"
+    quote_ccy: "USDT"
+    settlement_ccy: "USDT"
+    expiry: null
+    contract_variant: null
+    price_basis: "last"
+    volume_type: "exchange"
+    supported_timeframes: ["1m", "5m", "15m", "1h", "4h", "1d"]
+    specs:
+      min_qty: "1"
+      qty_step: "1"
+      price_step: "0.0001"
+      min_notional: "1"
+      contract_size: "1"
+    supports_short: false
+    session_calendar_id: "crypto-24x7"
+
+  - schema_version: "1.0"
+    source_id: "mt5-demo"
+    instrument_id: "EURUSD"
+    instrument_storage_key: "EURUSD"
+    alias: "EUR/USD"
+    venue_id: "mt5"
+    account_or_feed_id: "mt5-demo-feed"
+    provider_symbol: "EURUSD"
+    market_type: "cfd"
+    base_ccy: "EUR"
+    quote_ccy: "USD"
+    settlement_ccy: "USD"
+    expiry: null
+    contract_variant: null
+    price_basis: "unknown"
+    volume_type: "tick"
+    supported_timeframes: ["1m", "5m", "15m", "1h", "4h", "1d"]
+    specs:
+      min_qty: "0.01"
+      qty_step: "0.01"
+      price_step: "0.00001"
+      min_notional: "1000"
+      contract_size: "100000"
+    supports_short: true
+    session_calendar_id: "forex-24x5"
+
+  - schema_version: "1.0"
+    source_id: "mt5-demo"
+    instrument_id: "USDJPY"
+    instrument_storage_key: "USDJPY"
+    alias: "USD/JPY"
+    venue_id: "mt5"
+    account_or_feed_id: "mt5-demo-feed"
+    provider_symbol: "USDJPY"
+    market_type: "cfd"
+    base_ccy: "USD"
+    quote_ccy: "JPY"
+    settlement_ccy: "USD"
+    expiry: null
+    contract_variant: null
+    price_basis: "unknown"
+    volume_type: "tick"
+    supported_timeframes: ["1m", "5m", "15m", "1h", "4h", "1d"]
+    specs:
+      min_qty: "0.01"
+      qty_step: "0.01"
+      price_step: "0.001"
+      min_notional: "1000"
+      contract_size: "100000"
+    supports_short: true
+    session_calendar_id: "forex-24x5"
+
+  - schema_version: "1.0"
+    source_id: "mt5-demo"
+    instrument_id: "XAUUSD"
+    instrument_storage_key: "XAUUSD"
+    alias: "XAU/USD"
+    venue_id: "mt5"
+    account_or_feed_id: "mt5-demo-feed"
+    provider_symbol: "XAUUSD"
+    market_type: "cfd"
+    base_ccy: "XAU"
+    quote_ccy: "USD"
+    settlement_ccy: "USD"
+    expiry: null
+    contract_variant: null
+    price_basis: "unknown"
+    volume_type: "tick"
+    supported_timeframes: ["1m", "5m", "15m", "1h", "4h", "1d"]
+    specs:
+      min_qty: "0.01"
+      qty_step: "0.01"
+      price_step: "0.01"
+      min_notional: "1000"
+      contract_size: "100"
+    supports_short: true
+    session_calendar_id: "forex-24x5"

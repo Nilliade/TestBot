@@ -1,0 +1,21 @@
+Trading Platform — Stage 1 (read-only prototype)
+================================================
+
+Third-party notices (Stage 1):
+
+- TradingView Lightweight Charts (Apache-2.0): exact version to be pinned
+  in Step 1.4 with full LICENSE/NOTICE and TradingView attribution.
+  No frontend code in Step 1.1; no CDN/analytics.
+
+- Python packages: see backend/requirements.lock (exact pins). Licenses
+  are those of the respective packages (FastAPI, Uvicorn, Pydantic,
+  PyArrow, PyYAML, pytest, httpx, etc.).
+
+- Data feeds (OKX public spot, MT5 broker bars): terms of use, storage,
+  display and purpose must be verified per source. Where verification is
+  not possible, uncertainty is documented explicitly — legal purity is
+  not claimed. OKX availability/terms for the user's connection are
+  requiring verification (Section 0); MT5 broker/demo presence is not
+  confirmed.
+
+Stage 1 contains no trading functionality and no trading API keys.

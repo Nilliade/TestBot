@@ -1,0 +1,30 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "type": {
+      "const": "resync_request",
+      "default": "resync_request",
+      "title": "Type",
+      "type": "string"
+    },
+    "stream_epoch": {
+      "title": "Stream Epoch",
+      "type": "string"
+    },
+    "last_sequence_id": {
+      "title": "Last Sequence Id",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "stream_epoch",
+    "last_sequence_id"
+  ],
+  "title": "ResyncRequest",
+  "type": "object"
+}

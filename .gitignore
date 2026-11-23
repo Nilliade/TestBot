@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Local data (never commit)
+data/
+*.db
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.parquet
+logs/
+backups/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Secrets (Stage 1: no trading keys; bootstrap files are runtime-only)
+*.secret
+bootstrap*.txt
+.env
