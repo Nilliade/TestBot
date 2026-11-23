@@ -269,6 +269,11 @@ def test_offline_app_starts_and_serves_readonly_endpoints():
     from backend.app.main import app
 
     with TestClient(app) as client:
+        r_index = client.get("/")
+        assert r_index.status_code == 200
+        assert "STRICT READ-ONLY" in r_index.text
+        assert "BTC/USDT" in r_index.text
+
         r_health = client.get("/healthz")
         assert r_health.status_code == 200
         body = r_health.json()
