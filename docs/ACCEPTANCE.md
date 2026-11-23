@@ -10,13 +10,13 @@
 
 | # | Criterion | Status (Linux sandbox `Python 3.11.2`) | Status (Windows target `win32` `Python 3.11.9`) | Command / proof | Limitation |
 |---|---|---|---|---|---|
-| A1 | Read-only audit: route list, adapter method allowlist, static search for forbidden trading calls, config tests | `PASS` (7/7 tests) | `PASS` (Step 1.1 verified; re-run on Windows for Step 1.2 routes) | `pytest backend/tests/test_readonly_audit.py -v` | Static audit reduces risk, not absolute proof; adapter allowlist expands in 1.3 |
+| A1 | Read-only audit: route list, adapter method allowlist, static search for forbidden trading calls, config tests | `PASS` (7/7 tests) | `PASS` (7/7 tests) | `pytest backend/tests/test_readonly_audit.py -v` | Static audit reduces risk, not absolute proof; adapter allowlist expands in 1.3 |
 | A2 | Contracts & candles: `Instrument`/`Quote`/`Candle`/`FeedHealth` validation, `[open, close)` UTC, nullable, `supported_timeframes`, PK, revisions, `CONFIRMED_GAP` vs `POSSIBLE_GAP` without interpolation | `PASS` (27/27 tests) | `PASS` (27/27 tests) | `pytest backend/tests/test_contracts.py -v` | — |
-| A3 | Reconnect/recovery/WS queue on fake server (break, reconnect, history reload without dupes, gap preservation, overflow resync) | `PASS` (7/7 tests) | `NOT RUN` (awaiting Step 1.2 pytest run on Windows) | `pytest backend/tests/test_ws_reconnect_recovery.py -v` | Tested against deterministic fake upstream server; live OKX/MT5 is Step 1.3 |
-| A4 | Indicators: independent reference vectors (warm-up, edges, reset after `CONFIRMED_GAP`), batch vs incremental within tolerance `<= 1e-9` | `PASS` (8/8 tests) | `NOT RUN` (awaiting Step 1.2 pytest run on Windows) | `pytest backend/tests/test_indicators.py -v` | Hand-calculated reference vectors per SPEC §7.1–7.7 |
-| A5 | Storage: Parquet write failure, failure **between** Parquet publication and SQLite commit + reconciliation, revision dedup, SQLite migrations, backup/restore | `PASS` (14/14 tests) | `PASS` (14/14 tests: migrations 3/3, backup/restore 4/4, parquet_reconcile 7/7) | `pytest backend/tests/test_parquet_reconcile.py backend/tests/test_backup_restore.py backend/tests/test_migrations.py -v` | Verified on both Linux ext4 and Windows NTFS (`48 passed in 1.40s` in Step 1.1) |
+| A3 | Reconnect/recovery/WS queue on fake server (break, reconnect, history reload without dupes, gap preservation, overflow resync) | `PASS` (7/7 tests) | `PASS` (7/7 tests) | `pytest backend/tests/test_ws_reconnect_recovery.py -v` | Tested against deterministic fake upstream server; live OKX/MT5 is Step 1.3 |
+| A4 | Indicators: independent reference vectors (warm-up, edges, reset after `CONFIRMED_GAP`), batch vs incremental within tolerance `<= 1e-9` | `PASS` (8/8 tests) | `PASS` (8/8 tests) | `pytest backend/tests/test_indicators.py -v` | Hand-calculated reference vectors per SPEC §7.1–7.7 |
+| A5 | Storage: Parquet write failure, failure **between** Parquet publication and SQLite commit + reconciliation, revision dedup, SQLite migrations, backup/restore | `PASS` (14/14 tests) | `PASS` (14/14 tests: migrations 3/3, backup/restore 4/4, parquet_reconcile 7/7) | `pytest backend/tests/test_parquet_reconcile.py backend/tests/test_backup_restore.py backend/tests/test_migrations.py -v` | Verified on both Linux ext4 and Windows NTFS (`63 passed in 2.73s`) |
 | A6 | API & Launcher security: CSRF/Origin/auth, same-origin GET without `Origin`, CSRF refresh on reload/tabs, bootstrap one-time/expiry (incl. first-launch recovery), safe GUI reopen, unsafe ACL refusal, WS handshake, no secrets in logs/errors/static | `NOT RUN` — Step 1.3 | `NOT RUN` — Step 1.3 | — | Not in Step 1.2 scope |
-| A7 | Feed states: `CONNECTED`, `DEGRADED`, `STALE`, `MARKET_CLOSED`, `OFFLINE`, plus `RATE_LIMITED` if REST adapter in scope | `PASS` (state machine in `MarketHub` + `SessionCalendar`, tested in `test_ws_reconnect_recovery.py`) | `NOT RUN` (awaiting Step 1.2 pytest run on Windows) | `pytest backend/tests/test_ws_reconnect_recovery.py -v` | REST reserve not in scope (MT5 chosen); `RATE_LIMITED` `NOT APPLICABLE`; live adapter wiring is Step 1.3 |
+| A7 | Feed states: `CONNECTED`, `DEGRADED`, `STALE`, `MARKET_CLOSED`, `OFFLINE`, plus `RATE_LIMITED` if REST adapter in scope | `PASS` (state machine in `MarketHub` + `SessionCalendar`, tested in `test_ws_reconnect_recovery.py`) | `PASS` (tested in `test_ws_reconnect_recovery.py` on Windows) | `pytest backend/tests/test_ws_reconnect_recovery.py -v` | REST reserve not in scope (MT5 chosen); `RATE_LIMITED` `NOT APPLICABLE`; live adapter wiring is Step 1.3 |
 | A8 | GUI tests: instrument/timeframe switching, history load, `GAP`/`N/A`/feed statuses, `PREVIEW/UNCONFIRMED`, `SIMULATED` marking | `NOT RUN` — Step 1.4 | `NOT RUN` — Step 1.4 | — | Not in Step 1.2 scope |
 
 ## B. Checks on the user's machine (separate from CI; without them Stage 1 is not fully accepted)
@@ -28,7 +28,7 @@
 | B3 | GUI stability on isolated synthetic stream (`SIMULATED`) 30 min with report: OS/browser/versions, instrument count, event rate, warm-up duration, instrument/interval of measurements; no unbounded growth of queues/subscriptions/DOM; memory growth > 50 MB in last 20 min after warm-up triggers investigation (not auto-fail/pass) | `NOT RUN` — Step 1.4 | — | Not in Step 1.2 scope |
 | B4 | After clean restart: history, settings and correct source statuses preserved | `NOT RUN` | — | Requires full stack (Steps 1.2–1.4) |
 
-## Step 1.2 gate status
+## Step 1.1 & Step 1.2 gate status
 
 ### 1. Linux sandbox checks (`Debian GNU/Linux 12 x86_64`, Python `3.11.2`)
 
@@ -46,5 +46,10 @@
 
 | Check | Result (Windows) | Evidence / Limitation |
 |---|---|---|
-| Step 1.1 suite (`test_contracts`, `test_migrations`, `test_backup_restore`, `test_parquet_reconcile`, `test_readonly_audit` — 48 tests) | `PASS` (`48 passed in 1.40s`) | Verified on `win32 -- Python 3.11.9, pytest-8.4.2` |
-| Step 1.2 additions (`test_indicators.py` + `test_ws_reconnect_recovery.py` — 63 total tests) | `NOT RUN` on Windows yet | Run `.venv\Scripts\python.exe -m pytest backend/tests/ -v` on Windows to verify all 63 tests on `win32` |
+| Full Step 1.1 + Step 1.2 deterministic suite (`test_backup_restore`, `test_contracts`, `test_indicators`, `test_migrations`, `test_parquet_reconcile`, `test_readonly_audit`, `test_ws_reconnect_recovery` — 63 tests) | `PASS` (`63 passed in 2.73s`) | Verified on `platform win32 -- Python 3.11.9, pytest-8.4.2, pluggy-1.7.0` |
+
+### Step 1.2 gate verdict
+
+- **Linux sandbox deterministic suite (`A1`, `A2`, `A3`, `A4`, `A5`, `A7`)**: `PASS` (`63 passed in 0.65s`).
+- **Windows x86_64 target deterministic suite (`A1`, `A2`, `A3`, `A4`, `A5`, `A7`)**: `PASS` (`63 passed in 2.73s`).
+- **All mandatory Step 1.1 and Step 1.2 gates are PASSED** on both Linux and Windows x86_64.
